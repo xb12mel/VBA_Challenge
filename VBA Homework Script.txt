@@ -1,0 +1,78 @@
+Attribute VB_Name = "Module2"
+Sub VBA_Homework_Script()
+
+'Set Header Row
+Cells(1, 9).Value = "Ticker Symbol"
+Cells(1, 11).Value = "Price Change YOY"
+Cells(1, 12).Value = "%Change YOY"
+Cells(1, 10).Value = "Total Volume"
+'Cells(2, 16).Value = "Greatest % Increase"
+'Cells(3, 16).Value = "Greatest % Decrease"
+'Cells(4, 16).Value = "Greatest Total Volume"
+'Cells(1, 17).Value = "Ticker"
+'Cells(1, 18).Value = "Volume"
+
+
+    
+'Set a variable for selecting the ticker symbol
+Dim Column As Integer
+Dim TkrTotals As Double
+Dim OpenPrice As Double
+Dim ClosingPrice As Double
+Column = 1
+TickerSymbol = 2
+OpenPrice = 0
+ClosingPrice = 0
+
+
+'get the row number of the last row with data
+RowCount = Cells(Rows.Count, "A").End(xlUp).Row
+    
+    ' Loop through rows in the column counting backwards
+    For i = 3 To RowCount + 1
+
+        ' Searches for when the value of the next cell is different than that of the current cell
+        If Cells(i, Column).Value <> Cells(i - 1, Column).Value Then
+    
+            'Puts Stock tickers in Ticker Symbol Column
+            Cells(TickerSymbol, 9).Value = Cells(i - 1, Column).Value
+            
+            'Puts the Total Volume beside the Ticker Symbol
+            Cells(TickerSymbol, 10).Value = TkrTotals
+            
+            'Log Opening and Closing price for the calulation
+            ClosingPrice = Cells(i - 1, 6).Value
+            Cells(TickerSymbol, 11).Value = ClosingPrice - OpenPrice
+            Cells(TickerSymbol, 12).Value = 100 * ((ClosingPrice - OpenPrice) / OpenPrice)
+                
+                'conditionals for price change
+                If Cells(TickerSymbol, 11).Value < 0 Then
+                    Cells(TickerSymbol, 11).Interior.Color = 255
+                Else
+                    Cells(TickerSymbol, 11).Interior.Color = 65280
+                End If
+            
+            TickerSymbol = TickerSymbol + 1
+            
+            'Reset variables
+            ClosingPrice = 0
+            OpenPrice = 0
+            TkrTotals = 0
+    
+        
+    Else
+            'Storage for the total volume
+            TkrTotals = Cells(i, 7).Value + TkrTotals
+            Cells(TickerSymbol, 10).Value = TkrTotals
+        
+            If OpenPrice = 0 Then
+                OpenPrice = Cells(i - 1, 3).Value
+            End If
+         
+        End If
+  
+    Next i
+    
+         
+            
+End Sub
